@@ -7,21 +7,23 @@ GtkWidget *createConsoleBox(GtkWidget *window)
     textEntry = gtk_entry_new();
     console = gtk_grid_new();
     path_label = gtk_label_new("/prueba");
+    GtkWidget *keys_guide = gtk_label_new("Enter-> Get command | S-> Save document | C-> Cancel");
     GtkWidget *console_top = gtk_grid_new();
 
     gtk_grid_set_row_homogeneous(GTK_GRID(console), TRUE);
     gtk_grid_set_column_homogeneous(GTK_GRID(console), TRUE);
-    
+
     gtk_container_add(GTK_CONTAINER(scrolledwindow), textArea);
     gtk_grid_attach(GTK_GRID(console_top), path_label, 0, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(console_top), textEntry, 1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(console), scrolledwindow, 0, 2, 1, 8);
-    gtk_grid_attach(GTK_GRID(console), console_top, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(console), console_top, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(console), scrolledwindow, 0, 2, 1, 10);
+    gtk_grid_attach(GTK_GRID(console), keys_guide, 0, 1, 1, 1);
 
     return console;
 }
 
-int main(int argc, char *argv[])
+void gtk_main_initialiciation(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
 
@@ -33,6 +35,11 @@ int main(int argc, char *argv[])
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE); //because of this
     g_signal_connect(G_OBJECT(window), "destroy",
                      G_CALLBACK(gtk_main_quit), NULL);
+}
+
+int main(int argc, char *argv[])
+{
+    gtk_main_initialiciation(argc, argv);
     gtk_main();
     return 0;
 }
