@@ -13,7 +13,7 @@ typedef struct element{
 element* root = NULL;
 element* current_directory = NULL;
 
-void add_child (element* parent, bool is_folder, char* name, int block) 
+void add_child (element* parent, bool is_folder, char* name) 
 {
     element* new_child = (element*)malloc(sizeof(element));
     new_child->head = NULL;
@@ -25,8 +25,10 @@ void add_child (element* parent, bool is_folder, char* name, int block)
         new_child->file = -1;
     else
     {
-        new_child->file = block;
-        add_file(block);
+        int* block_value = free_blocks(1);
+        new_child->file = *block_value;
+        free(block_value);
+        add_file(new_child->file);
     }
 
     if (parent->child == NULL) 
@@ -56,7 +58,7 @@ void remove_child (element* parent, element* child)
         {
             temp = temp->sibling;
         }
-        parent->child = child->sibling;
+        temp->sibling = child->sibling;
         remove_file(child->file);
         free(child);
     }
@@ -100,4 +102,20 @@ void create_tree ()
     root = (element*)malloc(sizeof(element));
     strcpy(root->name, "root");
     current_directory = root;
+}
+
+void delete_tree(element* head) 
+{
+    element* temp_1 = head->child;
+    element* temp_2;
+    while (temp_1 != NULL) 
+    {
+        temp_2 = temp_1;
+        temp_1 = temp_1->sibling;
+        if (temp_2->file == -1)
+        {
+            delete_tree(temp_2);
+        }
+        remove_child(head, temp_2);
+    }
 }

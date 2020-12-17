@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include "tree.c"
 
-#define DISK_SIZE 1024
-#define BLOCK_SIZE 16
-
 int read_block(int block, char* data)
 {
     if (block >= DISK_SIZE / BLOCK_SIZE)
