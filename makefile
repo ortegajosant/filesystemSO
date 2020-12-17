@@ -14,7 +14,7 @@ run-disk:
 	./bin/disk
 
 filesystem:
-	gcc -o bin/filesystem filesystem.c
+	gcc -o bin/filesystem filesystem.c -lm
 
 run-filesystem:
 	./bin/filesystem
