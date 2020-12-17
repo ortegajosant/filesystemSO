@@ -86,14 +86,16 @@ int locate (bool go_back, char* name)
     else
     {
         element* temp = current_directory->child;
-        while (strcmp(temp->name, name) != 0)
+        while (temp != NULL)
         {
+            if (strcmp(temp->name, name) != 0 && temp->file == -1)
+            {
+                current_directory = temp;
+                return 0;
+            }
             temp = temp->sibling;
-            if (temp == NULL)
-                return -1;
         }
-        current_directory = temp;
-        return 0;
+        return -1;
     }
 }
 
