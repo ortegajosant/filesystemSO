@@ -8,21 +8,25 @@ void reset_pointer (char* ptr, int size)
     }
 }
 
-int read (int head, char* data, int size, int offset) 
+int read (inode* head, char* data, int size, int offset) 
 {
     if (offset >= DISK_SIZE)
         return -1;
 
     char* temp_block = (char*)malloc(sizeof(char) * BLOCK_SIZE);
 
-    head += (int) (offset / BLOCK_SIZE);
+    int block_offset = (int) (offset / BLOCK_SIZE);
+    for (int i = 0; i < block_offset; i++)
+    {
+        head = head->next_inode;
+    }
     offset = offset % BLOCK_SIZE;
 
     int bytes_read;
     int total_read = 0;
     while (total_read < size)
     {
-        bytes_read = read_block(head, temp_block);
+        bytes_read = read_block(head->block, temp_block);
         if (bytes_read == 0)
             break;
 
@@ -36,7 +40,7 @@ int read (int head, char* data, int size, int offset)
             memcpy(data + total_read, temp_block, bytes_read);
         
         total_read += bytes_read;
-        head++;
+        head = head->next_inode;
     }
 
     free(temp_block);
@@ -84,7 +88,7 @@ int write (int head, char* data, int size, int offset)
 
 int main() 
 {
-    char* data = (char*)malloc(sizeof(char) * 36);
+    // char* data = (char*)malloc(sizeof(char) * 36);
 
     // READ
 
@@ -97,6 +101,45 @@ int main()
     // memcpy(data, text, 36);
     // int result = write(3, data, 36, 1);
     // printf("%d\n", result);
+
+    // create_tree();
+    // add_child(current_directory, false, "a.txt");
+    // add_child(current_directory, false, "b.txt");
+    // add_child(current_directory, true, "c");
+    // add_child(current_directory, false, "d.txt");
+    // locate(false, "c");
+    // add_child(current_directory, false, "e.txt");
+    // add_child(current_directory, false, "f.txt");
+    // locate(true, "");
+    // printf("%s\n", root->child->sibling->sibling->child->sibling->name);
+
+    // add_file(0);
+    // add_file(1);
+    // inode* temp = find_inode(0);
+    // add_inode(temp, 3);
+    // temp = find_inode(1);
+    // add_inode(temp, 2);
+    // printf("%d %d | %d %d\n", 
+    //         inode_head->block,
+    //         inode_head->next_inode->block,
+    //         inode_head->next_file->block,
+    //         inode_head->next_file->next_inode->block);
+
+    // Simulacion arbol y i-nodos
+
+    create_tree();
+    add_child(current_directory, false, "test.txt", 0);
+    inode* test = find_inode(0);
+    add_inode(test, 5);
+    add_inode(test, 3);
+
+    // Simulacion de lectura junto a las estructuras
+
+    char* data = (char*)malloc(sizeof(char) * 36);
+    inode* inodo = find_inode(retrieve("test.txt")->file);
+
+    int result = read(inodo, data, 36, 0);
+    printf("READ: %s | %d \n", data, result);
 
     return 0;
 }

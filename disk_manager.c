@@ -1,6 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "tree.c"
 
 #define DISK_SIZE 1024
 #define BLOCK_SIZE 16
