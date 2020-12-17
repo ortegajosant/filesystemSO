@@ -6,3 +6,15 @@ term:
 
 run:
 	./bin/filesystem
+
+disk:
+	gcc -o bin/disk disk.c
+
+run-disk:
+	./bin/disk
+
+filesystem:
+	gcc -o bin/filesystem filesystem.c
+
+run-filesystem:
+	./bin/filesystem
