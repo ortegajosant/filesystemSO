@@ -209,10 +209,29 @@ int cat(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
 
 int mv(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
 {
-    if (length != 2)
+    if (length != 3)
     {
+        print_console("", "The function must have 2 arguments", true);
         return -1;
     }
+
+    if (current_directory->child)
+    {
+        element *temp = retrieve(cmd_buffer[1]);
+
+        if (temp)
+        {
+            strcpy(temp->name, cmd_buffer[2]);
+            save_tree();
+        }
+        else
+            print_console("", "File/Folder doesn't exists", true);
+    }
+    else
+    {
+        print_console("", "File/Folder doesn't exists", true);
+    }
+
     return 1;
 }
 

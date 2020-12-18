@@ -8,7 +8,7 @@ typedef struct element
     struct element *child;
     struct element *sibling;
     int file;
-    char name[25];
+    char name[128];
 } element;
 
 element *root = NULL;
