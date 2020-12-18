@@ -1,7 +1,17 @@
 #include "key_handler.c"
 
+void vizualization() {
+    
+}
+
 GtkWidget *createConsoleBox(GtkWidget *window)
 {
+    // Env variables
+    create_tree();
+    strcpy(path_label, "/");
+    add_name_to_path(path_label, root->name);
+
+    // GUI Widgets
     textArea = gtk_text_view_new();
     scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
     textEntry = gtk_entry_new();
@@ -23,14 +33,13 @@ GtkWidget *createConsoleBox(GtkWidget *window)
     window_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textArea));
     gtk_text_buffer_get_iter_at_offset(window_buffer, &text_iter, 0);
 
-    strcpy(path_label, "/");
-
-    print_console(path_label, "");
-
     gtk_grid_attach(GTK_GRID(console_top), textEntry, 1, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(console_top), button_cmd, 2, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(console), console_top, 0, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(console), scrolledwindow, 0, 1, 1, 10);
+
+
+    print_console(path_label, "", true);
 
     return console;
 }

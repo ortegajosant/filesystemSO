@@ -1,6 +1,6 @@
 #include "functions.c"
 
-void print_console(char *path, char *cmd)
+void print_console(char *path, char *content, bool jump)
 {
     if (strcmp(path, "") != 0)
     {
@@ -8,10 +8,11 @@ void print_console(char *path, char *cmd)
         gtk_text_buffer_insert(window_buffer, &text_iter, " >$ ", -1);
     }
 
-    if (strcmp(cmd, "") != 0)
+    if (strcmp(content, "") != 0)
     {
-        gtk_text_buffer_insert(window_buffer, &text_iter, cmd, -1);
-        gtk_text_buffer_insert(window_buffer, &text_iter, "\n", -1);
+        gtk_text_buffer_insert(window_buffer, &text_iter, content, -1);
+        if (jump)
+            gtk_text_buffer_insert(window_buffer, &text_iter, "\n", -1);
     }
 }
 
@@ -55,7 +56,7 @@ gboolean get_key_function(GtkWidget *widget, gpointer data)
     int length = strlen(gtk_entry_get_text(GTK_ENTRY(textEntry)));
     cmd_entry = realloc(cmd_entry, length);
     strcpy(cmd_entry, gtk_entry_get_text(GTK_ENTRY(textEntry)));
-    print_console("", cmd_entry);
+    print_console("", cmd_entry, true);
     int result = get_cmd_buffer(cmd_buffer, cmd_entry, delim);
     if (result != -1)
     {
@@ -96,7 +97,7 @@ gboolean get_key_function(GtkWidget *widget, gpointer data)
         }
     }
 
-    print_console(path_label, "");
+    print_console(path_label, "", true);
     gtk_entry_set_text(GTK_ENTRY(textEntry), "");
     clean_buffer();
 }
