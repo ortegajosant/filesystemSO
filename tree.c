@@ -13,7 +13,7 @@ typedef struct element{
 element* root = NULL;
 element* current_directory = NULL;
 
-void add_child (element* parent, bool is_folder, char* name) 
+void add_child (element* parent, bool is_folder, char* name, int block) 
 {
     element* new_child = (element*)malloc(sizeof(element));
     new_child->head = NULL;
@@ -25,9 +25,14 @@ void add_child (element* parent, bool is_folder, char* name)
         new_child->file = -1;
     else
     {
-        int* block_value = free_blocks(1);
-        new_child->file = *block_value;
-        free(block_value);
+        if (block < 0)
+        {
+            int* block_value = free_blocks(1);
+            new_child->file = *block_value;
+            free(block_value);
+        }
+        else
+            new_child->file = block;
         add_file(new_child->file);
     }
 

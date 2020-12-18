@@ -116,16 +116,19 @@ int write (inode* head, char* data, int size, int offset)
 
 int main() 
 {
-    create_tree();
+    // create_tree();
 
-    add_child(current_directory, true, "a");
-    add_child(current_directory, true, "b");
-    add_child(current_directory, true, "c");
-    locate(false, "b");
-    add_child(current_directory, false, "b_1.txt");
-    add_child(current_directory, false, "b_2.txt");
-    add_child(current_directory, false, "b_3.txt");
+    // add_child(current_directory, true, "a");
+    // add_child(current_directory, true, "b");
+    // add_child(current_directory, true, "c");
+    // locate(false, "b");
+    // add_child(current_directory, false, "b_1.txt");
+    // add_child(current_directory, false, "b_2.txt");
+    // add_child(current_directory, false, "b_3.txt");
 
+    // save_tree();
+
+    load_tree();
     save_tree();
 
     delete_tree(root);
