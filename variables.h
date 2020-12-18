@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 
 #define MAX_CMD_LENGTH 4
-#define MAX_WORD_LENGTH 128
+#define MAX_WORD_LENGTH 512
 
 // Graphic variables
 GtkWidget *window; //main window
@@ -16,7 +16,7 @@ GtkWidget *tree_view;
 GtkTextBuffer *window_buffer;
 GtkTextIter text_iter;
 
-char path_label[128];
+char path_label[1024];
 
 // Variables
 char *cmd_entry;
