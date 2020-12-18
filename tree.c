@@ -49,7 +49,8 @@ void remove_child (element* parent, element* child)
     if (parent->child == child)
     {
         parent->child = child->sibling;
-        remove_file(child->file);
+        if (child->file > -1)
+            remove_file(child->file);
         free(child);
     }
     else {
@@ -59,7 +60,8 @@ void remove_child (element* parent, element* child)
             temp = temp->sibling;
         }
         temp->sibling = child->sibling;
-        remove_file(child->file);
+        if (child->file > -1)
+            remove_file(child->file);
         free(child);
     }
 }
@@ -86,14 +88,16 @@ int locate (bool go_back, char* name)
     else
     {
         element* temp = current_directory->child;
-        while (strcmp(temp->name, name) != 0)
+        while (temp != NULL)
         {
+            if (strcmp(temp->name, name) == 0 && temp->file == -1)
+            {
+                current_directory = temp;
+                return 0;
+            }
             temp = temp->sibling;
-            if (temp == NULL)
-                return -1;
         }
-        current_directory = temp;
-        return 0;
+        return -1;
     }
 }
 
@@ -101,6 +105,10 @@ void create_tree ()
 {
     root = (element*)malloc(sizeof(element));
     strcpy(root->name, "root");
+    root->head = NULL;
+    root->child = NULL;
+    root->sibling = NULL;
+    root->file = -1;
     current_directory = root;
 }
 

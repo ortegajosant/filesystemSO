@@ -14,6 +14,8 @@ inode* inode_head = NULL;
 void add_inode (inode* head, int block) 
 {
     inode* new_block = (inode*)malloc(sizeof(inode));
+    new_block->next_file = NULL;
+    new_block->next_inode = NULL; 
     new_block->block = block;
 
     inode* temp = head;
@@ -74,6 +76,8 @@ inode* add_file (int block)
 {
     inode* new_file = (inode*)malloc(sizeof(inode));
     new_file->block = block;
+    new_file->next_inode = NULL;
+    new_file->next_file = NULL;
 
     if (inode_head == NULL)
         inode_head = new_file;
@@ -163,6 +167,8 @@ int* free_blocks (int size)
                 }
                 temp_2 = temp_2->next_inode;
             }
+            if (free == false)
+                break;
             temp_1 = temp_1->next_file;
         }
         
