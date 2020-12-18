@@ -55,8 +55,6 @@ void remove_name_to_path(char *path)
         char *ptr = strtok(temp_path, "/");
         char folder_temp[128];
 
-        g_print("\nFolder: %s\nPTR: %s\n", folder_temp, folder_temp + 1);
-
         while (ptr != NULL)
         {
             strcat(path, "/");
@@ -168,7 +166,6 @@ int rm(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
         return -1;
     }
 
-    g_print("\nHHOAA\n");
 
     element *temp = validate_file(cmd_buffer[1]);
     if (temp == NULL)
@@ -178,7 +175,6 @@ int rm(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
     }
 
     delete_tree(temp);
-    g_print("\nHHOAA\n");
     remove_child(current_directory, temp, true);
     save_tree();
 
@@ -193,7 +189,6 @@ int cat(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
     }
 
     element *temp = validate_file(cmd_buffer[1]);
-    g_print("FIle to read: %s, temp: %s\n", cmd_buffer[1], temp->name);
     if (temp)
     {
         inode *temp_node = find_inode(temp->file);
@@ -297,7 +292,6 @@ int echo(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
         if (temp)
         {
             inode *temp_node = find_inode(temp->file);
-            g_print("FILE: %s, FILE_BLOCK:%d, BLOCK: %d\n", temp->name, temp->file, temp_node->block);
             write_(temp_node, data, strlen(data), 0);
         }
 
