@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include "tree.c"
 
-int read_block(int block, char* data)
+int read_block(int block, char *data)
 {
     if (block >= DISK_SIZE / BLOCK_SIZE)
         return -2;
 
-    FILE* file;
+    FILE *file;
     file = fopen("./bin/disk.txt", "r");
-    if(file == NULL)
+    if (file == NULL)
         return -1;
     fseek(file, 0, SEEK_SET);
 
@@ -17,36 +17,29 @@ int read_block(int block, char* data)
     while (i < block)
     {
         c = fgetc(file);
-        if (c == '\n') 
+        if (c == '\n')
             i++;
     }
 
     fseek(file, 7, SEEK_CUR);
+
     for (i = 0; i < BLOCK_SIZE; i += 1)
     {
-        c = fgetc(file);
-        if (c == (char) 0) 
-        {
-            *(data + i) = '\0';
-            break;
-        }
-        else 
-            *(data + i) = c;
+        *(data + i) = fgetc(file);
     }
 
     fclose(file);
     return i;
 }
 
-
-int write_block(int block, char* data)
+int write_block(int block, char *data)
 {
     if (block >= DISK_SIZE / BLOCK_SIZE)
         return -2;
 
-    FILE* file;
+    FILE *file;
     file = fopen("./bin/disk.txt", "r+");
-    if(file == NULL)
+    if (file == NULL)
         return -1;
     fseek(file, 0, SEEK_SET);
 
@@ -55,7 +48,7 @@ int write_block(int block, char* data)
     while (i < block)
     {
         c = fgetc(file);
-        if (c == '\n') 
+        if (c == '\n')
             i++;
     }
 
@@ -70,7 +63,7 @@ int write_block(int block, char* data)
     return 0;
 }
 
-// int main () 
+// int main ()
 // {
 //     char* data = (char*)malloc(sizeof(char) * 16);
 

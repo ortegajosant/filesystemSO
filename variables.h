@@ -12,6 +12,7 @@ GtkWidget *scrolledwindow;
 GtkWidget *textEntry;
 GtkWidget *console;
 GtkWidget *button_cmd;
+GtkWidget *tree_view;
 GtkTextBuffer *window_buffer;
 GtkTextIter text_iter;
 
@@ -22,3 +23,9 @@ char *cmd_entry;
 
 char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH];
 char delim[] = " ";
+
+enum
+{
+    COLUMN = 0,
+    NUM_COLS
+};

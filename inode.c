@@ -3,22 +3,23 @@
 #define DISK_SIZE 1024
 #define BLOCK_SIZE 16
 
-typedef struct inode{
+typedef struct inode
+{
     int block;
-    struct inode* next_inode;
-    struct inode* next_file;
+    struct inode *next_inode;
+    struct inode *next_file;
 } inode;
 
-inode* inode_head = NULL;
+inode *inode_head = NULL;
 
-void add_inode (inode* head, int block) 
+void add_inode(inode *head, int block)
 {
-    inode* new_block = (inode*)malloc(sizeof(inode));
+    inode *new_block = (inode *)malloc(sizeof(inode));
     new_block->next_file = NULL;
-    new_block->next_inode = NULL; 
+    new_block->next_inode = NULL;
     new_block->block = block;
 
-    inode* temp = head;
+    inode *temp = head;
     while (temp->next_inode != NULL)
     {
         temp = temp->next_inode;
@@ -26,7 +27,7 @@ void add_inode (inode* head, int block)
     temp->next_inode = new_block;
 }
 
-void remove_inode (inode* head) 
+void remove_inode(inode *head)
 {
     if (head->next_inode == NULL)
     {
@@ -34,20 +35,20 @@ void remove_inode (inode* head)
     }
     else
     {
-        inode* temp = head;
+        inode *temp = head;
         while (temp->next_inode->next_inode != NULL)
         {
             temp = temp->next_inode;
         }
-        inode* to_delete = temp->next_inode;
+        inode *to_delete = temp->next_inode;
         temp->next_inode = NULL;
         free(to_delete);
     }
 }
 
-inode* find_inode (int block) 
+inode *find_inode(int block)
 {
-    inode* temp = inode_head;
+    inode *temp = inode_head;
     while (temp->block != block)
     {
         temp = temp->next_file;
@@ -55,13 +56,13 @@ inode* find_inode (int block)
     return temp;
 }
 
-int len_node (inode* inodo) 
+int len_node(inode *inodo)
 {
     if (inodo == NULL)
         return 0;
     else
     {
-        inode* temp = inodo;
+        inode *temp = inodo;
         int count = 1;
         while (temp->next_inode != NULL)
         {
@@ -72,18 +73,18 @@ int len_node (inode* inodo)
     }
 }
 
-inode* add_file (int block) 
+inode *add_file(int block)
 {
-    inode* new_file = (inode*)malloc(sizeof(inode));
+    inode *new_file = (inode *)malloc(sizeof(inode));
     new_file->block = block;
     new_file->next_inode = NULL;
     new_file->next_file = NULL;
 
     if (inode_head == NULL)
         inode_head = new_file;
-    else 
+    else
     {
-        inode* temp = inode_head;
+        inode *temp = inode_head;
         while (temp->next_file != NULL)
         {
             temp = temp->next_file;
@@ -92,28 +93,44 @@ inode* add_file (int block)
     }
 }
 
-inode* remove_file (int block) 
+inode *remove_file(int block, bool flag)
 {
-    if (inode_head->block == block) 
+    if (inode_head->block == block)
     {
-        inode* temp = inode_head;
+        inode *temp = inode_head;
         inode_head = inode_head->next_file;
         int n = len_node(temp);
+        if (flag)
+        {
+            int length = n * BLOCK_SIZE;
+            char *ptr = (char *)malloc(length);
+            memset(ptr, 0, length);
+            write_(temp, ptr, length, 0);
+            free(ptr);
+        }
         for (int i = 0; i < n; i++)
         {
             remove_inode(temp);
         }
     }
-    else 
+    else
     {
-        inode* temp = inode_head;
+        inode *temp = inode_head;
         while (temp->next_file->block != block)
         {
             temp = temp->next_file;
         }
-        inode* to_delete = temp->next_file;
+        inode *to_delete = temp->next_file;
         temp->next_file = temp->next_file->next_file;
         int n = len_node(to_delete);
+        if (flag)
+        {
+            int length = n * BLOCK_SIZE;
+            char *ptr = (char *)malloc(length);
+            memset(ptr, 0, length);
+            write_(temp, ptr, length, 0);
+            free(ptr);
+        }
         for (int i = 0; i < n; i++)
         {
             remove_inode(to_delete);
@@ -121,13 +138,13 @@ inode* remove_file (int block)
     }
 }
 
-int* free_blocks (int size) 
+int *free_blocks(int size)
 {
-    int* blocks = (int*)malloc(sizeof(int) * size);
+    int *blocks = (int *)malloc(sizeof(int) * size);
 
-    FILE* file;
+    FILE *file;
     file = fopen("./bin/disk.txt", "r");
-    if(file == NULL)
+    if (file == NULL)
         return NULL;
     fseek(file, 0, SEEK_SET);
 
@@ -145,7 +162,7 @@ int* free_blocks (int size)
         int k;
         for (k = 0; k < BLOCK_SIZE; k++)
         {
-            if (fgetc(file) != '\0') 
+            if (fgetc(file) != '\0')
             {
                 free = false;
                 k++;
@@ -153,8 +170,8 @@ int* free_blocks (int size)
             }
         }
 
-        inode* temp_1 = inode_head;
-        inode* temp_2;
+        inode *temp_1 = inode_head;
+        inode *temp_2;
         while (temp_1 != NULL)
         {
             temp_2 = temp_1;
@@ -171,13 +188,13 @@ int* free_blocks (int size)
                 break;
             temp_1 = temp_1->next_file;
         }
-        
-        if (free) 
+
+        if (free)
         {
             *(blocks + i) = j;
             i++;
         }
-        
+
         fseek(file, BLOCK_SIZE - k + 9, SEEK_CUR);
     }
 

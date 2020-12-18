@@ -84,7 +84,11 @@ int mkdir_(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
     }
 
     if (strcmp(cmd_buffer[1], "..") != 0)
-        add_child(current_directory, true, cmd_buffer[1]);
+    {
+        add_child(current_directory, true, cmd_buffer[1], -1);
+        save_tree();
+    }
+
     return 1;
 }
 int rmdir_(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
@@ -101,7 +105,8 @@ int rmdir_(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
         return -2;
     }
     delete_tree(temp);
-    remove_child(current_directory, temp);
+    remove_child(current_directory, temp, false);
+    save_tree();
     return 1;
 }
 
@@ -151,8 +156,8 @@ int touch(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
         print_console("", "The file already exists", true);
         return -2;
     }
-
-    add_child(current_directory, false, cmd_buffer[1]);
+    add_child(current_directory, false, cmd_buffer[1], -1);
+    save_tree();
     return 1;
 }
 
@@ -174,7 +179,8 @@ int rm(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
 
     delete_tree(temp);
     g_print("\nHHOAA\n");
-    remove_child(current_directory, temp);
+    remove_child(current_directory, temp, true);
+    save_tree();
 
     return 1;
 }
@@ -191,8 +197,9 @@ int cat(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
     if (temp)
     {
         inode *temp_node = find_inode(temp->file);
-        char *data = (char *)malloc(16);
-        read_(temp_node, data, 16, 0);
+        int length = len_node(temp_node) * BLOCK_SIZE;
+        char *data = (char *)malloc(length);
+        read_(temp_node, data, length, 0);
         print_console("", data, true);
         free(data);
     }
@@ -280,5 +287,21 @@ int echo(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
         free(data);
     }
 
+    return 1;
+}
+
+int vs_(char cmd_buffer[MAX_CMD_LENGTH][MAX_WORD_LENGTH], int length)
+{
+    if (length != 2)
+    {
+        return -1;
+    }
+
+    if (strcmp(cmd_buffer[1], "-f") != 0)
+    {
+        print_console("", "Parameter must be '-f'", true);
+        return -2;
+    }
+    update_view();
     return 1;
 }

@@ -2,40 +2,49 @@
 #include <string.h>
 #include "inode.c"
 
-typedef struct element{
-    struct element* head;
-    struct element* child;
-    struct element* sibling;
+typedef struct element
+{
+    struct element *head;
+    struct element *child;
+    struct element *sibling;
     int file;
     char name[25];
 } element;
 
-element* root = NULL;
-element* current_directory = NULL;
+element *root = NULL;
+element *current_directory = NULL;
 
-void add_child (element* parent, bool is_folder, char* name) 
+void add_child(element *parent, bool is_folder, char *name, int block)
 {
-    element* new_child = (element*)malloc(sizeof(element));
-    new_child->head = NULL;
+    element *new_child = (element *)malloc(sizeof(element));
+    new_child->head = parent;
     new_child->child = NULL;
     new_child->sibling = NULL;
     strcpy(new_child->name, name);
-    
-    if (is_folder) 
+
+    if (is_folder)
         new_child->file = -1;
     else
     {
-        int* block_value = free_blocks(1);
-        new_child->file = *block_value;
-        free(block_value);
+        if (block < 0)
+        {
+            int *block_value = free_blocks(1);
+            new_child->file = *block_value;
+            free(block_value);
+        }
+        else
+        {
+            new_child->file = block;
+        }
+
         add_file(new_child->file);
     }
 
-    if (parent->child == NULL) 
+    if (parent->child == NULL)
         parent->child = new_child;
     else
     {
-        element* temp = parent->child;
+        element *temp = parent->child;
         while (temp->sibling != NULL)
         {
             temp = temp->sibling;
@@ -44,31 +53,32 @@ void add_child (element* parent, bool is_folder, char* name)
     }
 }
 
-void remove_child (element* parent, element* child) 
+void remove_child(element *parent, element *child, bool flag)
 {
     if (parent->child == child)
     {
         parent->child = child->sibling;
         if (child->file > -1)
-            remove_file(child->file);
+            remove_file(child->file, flag);
         free(child);
     }
-    else {
-        element* temp = parent->child;
+    else
+    {
+        element *temp = parent->child;
         while (temp->sibling != child)
         {
             temp = temp->sibling;
         }
         temp->sibling = child->sibling;
         if (child->file > -1)
-            remove_file(child->file);
+            remove_file(child->file, flag);
         free(child);
     }
 }
 
-element* retrieve (char* name) 
+element *retrieve(char *name)
 {
-    element* temp = current_directory->child;
+    element *temp = current_directory->child;
     while (strcmp(temp->name, name) != 0)
     {
         temp = temp->sibling;
@@ -78,7 +88,7 @@ element* retrieve (char* name)
     return temp;
 }
 
-int locate (bool go_back, char* name) 
+int locate(bool go_back, char *name)
 {
     if (go_back == true)
     {
@@ -87,7 +97,7 @@ int locate (bool go_back, char* name)
     }
     else
     {
-        element* temp = current_directory->child;
+        element *temp = current_directory->child;
         while (temp != NULL)
         {
             if (strcmp(temp->name, name) == 0 && temp->file == -1)
@@ -101,9 +111,9 @@ int locate (bool go_back, char* name)
     }
 }
 
-void create_tree () 
+void create_tree()
 {
-    root = (element*)malloc(sizeof(element));
+    root = (element *)malloc(sizeof(element));
     strcpy(root->name, "root");
     root->head = NULL;
     root->child = NULL;
@@ -112,11 +122,11 @@ void create_tree ()
     current_directory = root;
 }
 
-void delete_tree(element* head) 
+void delete_tree(element *head)
 {
-    element* temp_1 = head->child;
-    element* temp_2;
-    while (temp_1 != NULL) 
+    element *temp_1 = head->child;
+    element *temp_2;
+    while (temp_1 != NULL)
     {
         temp_2 = temp_1;
         temp_1 = temp_1->sibling;
@@ -124,6 +134,6 @@ void delete_tree(element* head)
         {
             delete_tree(temp_2);
         }
-        remove_child(head, temp_2);
+        remove_child(head, temp_2, false);
     }
 }

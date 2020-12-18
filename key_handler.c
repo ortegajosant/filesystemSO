@@ -18,6 +18,7 @@ void print_console(char *path, char *content, bool jump)
 
 void clean_buffer()
 {
+    memset(cmd_entry, 0, strlen(cmd_entry));
     for (int i = 0; i < MAX_CMD_LENGTH; i++)
     {
         memset(cmd_buffer[i], 0, MAX_WORD_LENGTH);
@@ -54,7 +55,7 @@ int get_cmd_buffer(char cmd_dest[MAX_CMD_LENGTH][MAX_WORD_LENGTH], char *cmd_sou
 gboolean get_key_function(GtkWidget *widget, gpointer data)
 {
     int length = strlen(gtk_entry_get_text(GTK_ENTRY(textEntry)));
-    cmd_entry = realloc(cmd_entry, length);
+    cmd_entry = (char*)realloc(cmd_entry, length);
     strcpy(cmd_entry, gtk_entry_get_text(GTK_ENTRY(textEntry)));
     print_console("", cmd_entry, true);
     int result = get_cmd_buffer(cmd_buffer, cmd_entry, delim);
@@ -91,9 +92,11 @@ gboolean get_key_function(GtkWidget *widget, gpointer data)
             ls(cmd_buffer, result);
         else if (strcmp(cmd_buffer[0], "echo") == 0)
             echo(cmd_buffer, result);
+        else if (strcmp(cmd_buffer[0], "vs") == 0)
+            vs_(cmd_buffer, result);
         else
         {
-            g_print("Resultado erróneo%s\n", cmd_buffer[0]);
+            print_console("", "Command no valid", true);
         }
     }
 
