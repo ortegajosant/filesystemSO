@@ -95,7 +95,7 @@ void load_tree()
     fseek(file, 0, SEEK_SET);
 
     char* json = (char*)malloc(sizeof(char) * size);
-    fgets(json, size, file);
+    fread(json, 1, size, file);
     fclose(file);
 
     json_object* filesystem = json_tokener_parse(json);
