@@ -55,7 +55,7 @@ int get_cmd_buffer(char cmd_dest[MAX_CMD_LENGTH][MAX_WORD_LENGTH], char *cmd_sou
 gboolean get_key_function(GtkWidget *widget, gpointer data)
 {
     int length = strlen(gtk_entry_get_text(GTK_ENTRY(textEntry)));
-    cmd_entry = (char*)realloc(cmd_entry, length);
+    cmd_entry = (char *)realloc(cmd_entry, length);
     strcpy(cmd_entry, gtk_entry_get_text(GTK_ENTRY(textEntry)));
     print_console("", cmd_entry, true);
     int result = get_cmd_buffer(cmd_buffer, cmd_entry, delim);
@@ -68,10 +68,7 @@ gboolean get_key_function(GtkWidget *widget, gpointer data)
             rmdir_(cmd_buffer, result);
         else if (strcmp(cmd_buffer[0], "cd") == 0)
         {
-            if (cd(cmd_buffer, result) != -1)
-            {
-                g_print("Nice");
-            }
+            cd(cmd_buffer, result);
         }
         else if (strcmp(cmd_buffer[0], "mv") == 0)
             mv(cmd_buffer, result);
@@ -95,9 +92,7 @@ gboolean get_key_function(GtkWidget *widget, gpointer data)
         else if (strcmp(cmd_buffer[0], "vs") == 0)
             vs_(cmd_buffer, result);
         else
-        {
-            print_console("", "Command no valid", true);
-        }
+            print_console("", "Invalid command", true);
     }
 
     print_console(path_label, "", true);
