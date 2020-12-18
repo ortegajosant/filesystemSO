@@ -24,14 +24,7 @@ int read_block(int block, char* data)
     fseek(file, 7, SEEK_CUR);
     for (i = 0; i < BLOCK_SIZE; i += 1)
     {
-        c = fgetc(file);
-        if (c == (char) 0) 
-        {
-            *(data + i) = '\0';
-            break;
-        }
-        else 
-            *(data + i) = c;
+        *(data + i) = fgetc(file);
     }
 
     fclose(file);

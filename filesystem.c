@@ -1,5 +1,6 @@
 #include <math.h>
-#include "parser.c"
+#include "disk_manager.c"
+// #include "parser.c"
 
 void reset_pointer (char* ptr, int size) 
 {
@@ -53,6 +54,14 @@ int write (inode* head, char* data, int size, int offset)
     inode* main_head = head;
     if (offset >= DISK_SIZE)
         return -1;
+    
+    char* cleaner = (char*)malloc(sizeof(char) * BLOCK_SIZE);
+    reset_pointer(cleaner, BLOCK_SIZE);
+    while (head != NULL)
+    {
+        write_block(head->block, cleaner);
+        head = head->next_inode;
+    }
 
     char* temp_block = (char*)malloc(sizeof(char) * BLOCK_SIZE);
 
@@ -72,6 +81,7 @@ int write (inode* head, char* data, int size, int offset)
 
     offset = offset % BLOCK_SIZE;
 
+    head = main_head;
     for (int i = 0; i < block_offset; i++)
     {
         head = head->next_inode;
@@ -110,26 +120,51 @@ int write (inode* head, char* data, int size, int offset)
         head = head->next_inode;
     }
 
+    int count = 0;
+    while (head != NULL)
+    {
+        count++;
+        head = head->next_inode;
+    }
+    for (int i = 0; i < count; i++)
+    {
+        remove_inode(main_head);
+    }
+
     free(temp_block);
     return total_write;
 }
 
 int main() 
 {
-    // create_tree();
+    // Main Final
 
-    // add_child(current_directory, true, "a");
-    // add_child(current_directory, true, "b");
-    // add_child(current_directory, true, "c");
-    // locate(false, "b");
-    // add_child(current_directory, false, "b_1.txt");
-    // add_child(current_directory, false, "b_2.txt");
-    // add_child(current_directory, false, "b_3.txt");
-
-    // save_tree();
-
+    /*
     load_tree();
     save_tree();
+    delete_tree(root);
+    free(root);
+    */
+
+    // Pruebas
+
+    create_tree();
+
+    add_child(current_directory, false, "test", -1);
+
+    inode* test = find_inode(retrieve("test")->file);
+
+    char* data = (char*)malloc(sizeof(char) * 36);
+    strcpy(data, "abcdefghijklmnopqrstuvwxyz1234567890");
+    write(test, data, 36, 0);
+    free(data);
+
+    int length = len_node(test) * BLOCK_SIZE;
+    char* data2 = (char*)malloc(sizeof(char) * length);
+    read(test, data2, length, 0);
+    printf("%s\n", data2);
+    free(data2);
+
 
     delete_tree(root);
     free(root);
