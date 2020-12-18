@@ -14,7 +14,7 @@ run-disk:
 	./bin/disk
 
 filesystem:
-	gcc -o bin/filesystem filesystem.c -lm
+	gcc -o bin/filesystem filesystem.c -lm -ljson-c 
 
 run-filesystem:
 	./bin/filesystem

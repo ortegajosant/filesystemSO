@@ -1,5 +1,5 @@
-#include "disk_manager.c"
 #include <math.h>
+#include "parser.c"
 
 void reset_pointer (char* ptr, int size) 
 {
@@ -25,7 +25,7 @@ int read (inode* head, char* data, int size, int offset)
 
     int bytes_read;
     int total_read = 0;
-    while (total_read < size)
+    while (total_read < size && head != NULL)
     {
         bytes_read = read_block(head->block, temp_block);
         if (bytes_read == 0)
@@ -76,8 +76,6 @@ int write (inode* head, char* data, int size, int offset)
     {
         head = head->next_inode;
     }
-    
-    printf("%d %d %d %d\n", blocks_needed, block_offset, offset, size);
 
     int bytes_write;
     int total_write = 0;
@@ -118,6 +116,20 @@ int write (inode* head, char* data, int size, int offset)
 
 int main() 
 {
-    printf("Working!!!\n");
+    create_tree();
+
+    add_child(current_directory, true, "a");
+    add_child(current_directory, true, "b");
+    add_child(current_directory, true, "c");
+    locate(false, "b");
+    add_child(current_directory, false, "b_1.txt");
+    add_child(current_directory, false, "b_2.txt");
+    add_child(current_directory, false, "b_3.txt");
+
+    save_tree();
+
+    delete_tree(root);
+    free(root);
+
     return 0;
 }
